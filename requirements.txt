@@ -1,4 +1,4 @@
 codecov
 art
-
-
+pyqt
+argparser
