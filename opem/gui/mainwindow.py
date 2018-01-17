@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import *
 from opem.Amphlett_Params import *
 
 
-
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
