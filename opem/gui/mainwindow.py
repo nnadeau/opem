@@ -1,6 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from opem.Amphlett_Params import *
+from opem.Amphlett import *
 
 
 class MainWindow(QWidget):

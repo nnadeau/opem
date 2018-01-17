@@ -30,7 +30,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-
+    app = None
     Menu = {"Amphlett_Analysis": Amphlett_Analysis,
             "Larminiee_Analysis": Larminiee_Analysis,
             "Chamberlain_Kim_Analysis": Chamberline_Kim_Analysis}
@@ -43,7 +43,6 @@ if __name__ == "__main__":
         app = QApplication(sys.argv)
         a = MainWindow()
         a.show()
-        sys.exit(app.exec_())
     else:           # RUN Normal
         ExitFlag = False
         while not ExitFlag:
@@ -62,4 +61,5 @@ if __name__ == "__main__":
                 if InputIndex.upper() != "R":
                     ExitFlag = True
 
-
+    if app is not None:
+        sys.exit(app.exec_())
