@@ -41,7 +41,7 @@ if __name__ == "__main__":
         doctest.testfile("test.py", optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS, verbose=False)
     elif args.gui:  # RUN With GUI
         app = QApplication(sys.argv)
-        a = MainWindow()
+        a = MainWindow(Menu)
         a.show()
     else:           # RUN Normal
         ExitFlag = False

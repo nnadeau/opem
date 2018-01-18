@@ -1,50 +1,106 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from opem.Amphlett import *
+from opem.Params import Amphlett_InputParams as A_Input
+from opem.Params import Chamberline_InputParams as C_Input
+from opem.Params import Larminiee_InputParams as L_Input
 
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, menu):
         super(MainWindow, self).__init__()
-        self.main = QVBoxLayout(self)
+        self.mode = []
+        self.layout = []
         self.attributes = {}
-        self.name = QLabel('OPEM')
-        self.name.setAlignment(Qt.AlignCenter)
-        self.main.addWidget(self.name)
-        for f in self.get_attr_fields():
-            self.main.addLayout(f)
+        self.selectedMode = 0
+        self.menu = menu
+        self.menuKey = list(menu.keys())
+        self.menuKey.sort()
 
-        self.reset = QPushButton('Reset')
-        self.analyse = QPushButton('Analyse')
-        self.main.addLayout(self.get_buttons())
+        self.main = QVBoxLayout(self)
+
+        self.initialModes(menu.keys())
+        self.mode[0].setVisible(True)
+        self.mode[1].setVisible(False)
+        self.mode[2].setVisible(False)
+        self.main.addWidget(self.getNameWidget())
+        self.main.addWidget(self.getComboWidget(self.menuKey))
+        self.main.addWidget(self.mode[0])
+        self.main.addWidget(self.mode[1])
+        self.main.addWidget(self.mode[2])
+        self.main.addWidget(self.getButtonWidget())
         self.setLayout(self.main)
 
-    def get_attr_fields(self):
+    def initialModes(self, menu):
+        for i, k in enumerate(menu):
+            self.mode.append(QWidget(self))
+            self.layout.append(QVBoxLayout(self.mode[i]))
+            for f in self.get_attr_fields(i):
+                self.layout[i].addLayout(f)
+            self.mode[i].setLayout(self.layout[i])
+
+    def getButtonWidget(self):
+        w = QWidget(self)
+        resetBtn = QPushButton('Reset')
+        analyseBtn = QPushButton('Analyse')
+        layout = QHBoxLayout(self)
+        layout.addWidget(resetBtn)
+        layout.addWidget(analyseBtn)
+        resetBtn.clicked.connect(self.reset_slt)
+        analyseBtn.clicked.connect(self.analyse_slt)
+        w.setLayout(layout)
+        return w
+
+    def getComboWidget(self, list):
+        combo = QComboBox(self)
+        combo.currentIndexChanged.connect(self.modeChanged_slt);
+        for k in list:
+            combo.addItem(k)
+        return combo
+
+    def getNameWidget(self):
+        name = QLabel('OPEM')
+        name.setAlignment(Qt.AlignCenter)
+        return name
+
+    def get_attr_fields(self, mode):
         fields = []
-        for item in list(InputParams.keys()):
+        Input = {}
+        if mode == 0:
+            Input = A_Input
+        elif mode == 1:
+            Input = C_Input
+        elif mode == 2:
+            Input = L_Input
+        else:
+            return fields
+
+        for item in list(Input.keys()):
             field = QHBoxLayout(self)
-            label = QLabel(item + ' ( ' + InputParams[item] + ' ) : ')
+            label = QLabel(item + ' ( ' + Input[item] + ' ) : ')
             field.addWidget(label)
             self.attributes[item] = QDoubleSpinBox(self)
             self.attributes[item].setRange(0, 1000)
-            self.attributes[item].setMaximumSize(200, 20)
             self.attributes[item].setMinimumSize(100, 20)
             field.addWidget(self.attributes[item])
             fields.append(field)
         return fields
-
-    def get_buttons(self):
-        layout = QHBoxLayout(self)
-        layout.addWidget(self.reset)
-        layout.addWidget(self.analyse)
-        self.reset.clicked.connect(self.reset_slt)
-        self.analyse.clicked.connect(self.analyse_slt)
-        return layout
 
     def reset_slt(self):
         for k in self.attributes.keys():
             self.attributes[k].setValue(0.0)
         print('reset')
 
+    def analyze(self, menu, attributes):
+        menu[self.menuKey[self.selectedMode]](attributes, True)
+
     def analyse_slt(self):
-        print('analyse')
+        print('analyse ... ')
+
+        self.analyze(self.menu, self.attributes)
+        print('analysed')
+
+    def modeChanged_slt(self, index):
+        for m in self.mode:
+            m.setVisible(False)
+        self.mode[index].setVisible(True)
+        self.selectedMode = index
