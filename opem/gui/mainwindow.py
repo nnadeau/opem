@@ -4,11 +4,13 @@ from opem.Params import Amphlett_InputParams as A_Input
 from opem.Params import Chamberline_InputParams as C_Input
 from opem.Params import Larminiee_InputParams as L_Input
 from opem.Params import Padulles_InputParams as P_Input
+from opem.gui.plotter import *
 
 
 class MainWindow(QWidget):
     def __init__(self, menu):
         super(MainWindow, self).__init__()
+        self.plotter = ApplicationWindow(parent=self)
         self.mode = []
         self.layout = []
         self.attributes = {}
@@ -16,7 +18,7 @@ class MainWindow(QWidget):
         self.menu = menu
         self.menuKey = list(menu.keys())
         self.menuKey.sort()
-
+        self.super = QHBoxLayout(self)
         self.main = QVBoxLayout(self)
 
         self.initialModes(menu.keys())
@@ -25,12 +27,15 @@ class MainWindow(QWidget):
         self.mode[0].setVisible(True)
 
         self.main.addWidget(self.getNameWidget())
+        self.main.addWidget(self.HLine())
         self.main.addWidget(self.getComboWidget(self.menuKey))
         for mode in self.mode:
             self.main.addWidget(mode)
-
         self.main.addWidget(self.getButtonWidget())
-        self.setLayout(self.main)
+        self.setLayout(self.super)
+        self.super.addLayout(self.main)
+        self.super.addWidget(self.VLine())
+        self.super.addWidget(self.plotter)
 
     def initialModes(self, menu):
         for i, k in enumerate(menu):
@@ -78,7 +83,7 @@ class MainWindow(QWidget):
         else:
             return fields
 
-        for item in list(Input.keys()):
+        for item in sorted(list(Input.keys())):
             field = QHBoxLayout(self)
             label = QLabel(item + ' ( ' + Input[item] + ' ) : ')
             field.addWidget(label, alignment=Qt.AlignLeft)
@@ -95,15 +100,29 @@ class MainWindow(QWidget):
         print('reset')
 
     def analyze(self, menu, attributes):
+        temp = {}
         for key, value in attributes.items():
-            attributes[key] = value.value()
-        menu[self.menuKey[self.selectedMode]](attributes, True)
+            temp[key] = value.value()
+        menu[self.menuKey[self.selectedMode]](temp, False)
 
     def analyse_slt(self):
         print('analyse ... ')
 
         self.analyze(self.menu, self.attributes)
         print('analysed')
+
+
+    def HLine(self):
+        toto = QFrame(parent=self)
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        return toto
+
+    def VLine(self):
+        toto = QFrame(parent=self)
+        toto.setFrameShape(QFrame.VLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        return toto
 
     def mode_changed_slt(self, index):
         for m in self.mode:
