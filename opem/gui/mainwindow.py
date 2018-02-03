@@ -81,11 +81,11 @@ class MainWindow(QWidget):
         for item in list(Input.keys()):
             field = QHBoxLayout(self)
             label = QLabel(item + ' ( ' + Input[item] + ' ) : ')
-            field.addWidget(label)
+            field.addWidget(label, alignment=Qt.AlignLeft)
             self.attributes[item] = QDoubleSpinBox(self)
             self.attributes[item].setRange(0, 1000)
-            self.attributes[item].setMinimumSize(150, 20)
-            field.addWidget(self.attributes[item])
+            self.attributes[item].setMinimumSize(200, 20)
+            field.addWidget(self.attributes[item], alignment=Qt.AlignRight)
             fields.append(field)
         return fields
 
@@ -95,6 +95,8 @@ class MainWindow(QWidget):
         print('reset')
 
     def analyze(self, menu, attributes):
+        for key, value in attributes.items():
+            attributes[key] = value.value()
         menu[self.menuKey[self.selectedMode]](attributes, True)
 
     def analyse_slt(self):
