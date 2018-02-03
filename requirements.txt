@@ -1,3 +1,5 @@
+numpy
+matplotlib
 codecov
 art
 PyQt5
