@@ -88,8 +88,9 @@ class MainWindow(QWidget):
             label = QLabel(item + ' ( ' + Input[item] + ' ) : ')
             field.addWidget(label, alignment=Qt.AlignLeft)
             self.attributes[item] = QDoubleSpinBox(self)
-            self.attributes[item].setRange(0, 1000)
+            self.attributes[item].setRange(0, 100000)
             self.attributes[item].setMinimumSize(200, 20)
+            self.attributes[item].setDecimals(10)
             field.addWidget(self.attributes[item], alignment=Qt.AlignRight)
             fields.append(field)
         return fields
@@ -103,14 +104,13 @@ class MainWindow(QWidget):
         temp = {}
         for key, value in attributes.items():
             temp[key] = value.value()
-        menu[self.menuKey[self.selectedMode]](temp, False)
+        menu[self.menuKey[self.selectedMode]](temp, True)
 
     def analyse_slt(self):
         print('analyse ... ')
 
         self.analyze(self.menu, self.attributes)
         print('analysed')
-
 
     def HLine(self):
         toto = QFrame(parent=self)

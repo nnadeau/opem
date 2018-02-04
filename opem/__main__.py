@@ -10,7 +10,8 @@ import sys
 import argparse
 from .gui.mainwindow import *
 
-Version=0.3
+Version = 0.3
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="This is OPEM")

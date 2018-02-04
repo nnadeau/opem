@@ -2,10 +2,9 @@
 import math
 from opem.Params import Amphlett_InputParams as InputParams
 from opem.Params import Amphlett_OutputParams as OutputParams
-from opem.Params import xi1,xi3,xi4,HHV,uF
+from opem.Params import xi1, xi3, xi4, HHV, uF
 from opem.Functions import *
 import os
-
 
 
 def Enernst_Calc(T, PH2, PO2):
@@ -203,6 +202,7 @@ def VStack_Calc(N, Vcell):
     except Exception:
         print("[Error] VStack Calculation Error")
 
+
 def Loss_Calc(Eta_Act, Eta_Ohmic, Eta_Conc):
     """
     This function calculate loss
@@ -253,17 +253,17 @@ def Power_Calc(Vcell, i):
         print("[Error] Power Calculation Error")
 
 
-def PowerStack_Calc(Power,N):
-    '''
+def PowerStack_Calc(Power, N):
+    """
     This function calculate power_stack
     :param Power: Single Cell power [W]
     :type Power : float
     :param N: number of single cells
     :type N : int
     :return: Power Stack [W] as float
-    '''
+    """
     try:
-        result=N*Power
+        result = N * Power
         return result
     except Exception:
         print("[Error] Power Stack Calculation Error")
@@ -281,9 +281,9 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False):
     OutputFile = None
     CSVFile = None
     try:
-        Simulation_Title="Amphlett"
+        Simulation_Title = "Amphlett"
         print("###########")
-        print(Simulation_Title+"-Model Simulation")
+        print(Simulation_Title + "-Model Simulation")
         print("###########")
         OutputParamsKeys = list(OutputParams.keys())
         OutputParamsKeys.sort()
@@ -292,9 +292,9 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False):
             Input_Dict = InputMethod(InputParams)
         else:
             Input_Dict = InputMethod
-        Input_Dict=filter_lambda(Input_Dict)
-        OutputFile = Output_Init(Input_Dict,Simulation_Title)
-        CSVFile = CSV_Init(OutputParamsKeys,OutputParams,Simulation_Title)
+        Input_Dict = filter_lambda(Input_Dict)
+        OutputFile = Output_Init(Input_Dict, Simulation_Title)
+        CSVFile = CSV_Init(OutputParamsKeys, OutputParams, Simulation_Title)
         print("Analyzing . . .")
         IEndMax = Input_Dict["JMax"] * Input_Dict["A"]
         IEnd = min(IEndMax, Input_Dict["i-stop"])
@@ -316,21 +316,23 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False):
                 Output_Dict["PEM Efficiency"] = Efficiency_Calc(Output_Dict["Vcell"])
                 Output_Dict["Power"] = Power_Calc(Output_Dict["Vcell"], i)
                 Output_Dict["VStack"] = VStack_Calc(Input_Dict["N"], Output_Dict["Vcell"])
-                Output_Dict["Power-Stack"]=PowerStack_Calc(Output_Dict["Power"],Input_Dict["N"])
-                Output_Save(OutputParamsKeys, Output_Dict,OutputParams, i, OutputFile)
+                Output_Dict["Power-Stack"] = PowerStack_Calc(Output_Dict["Power"], Input_Dict["N"])
+                Output_Save(OutputParamsKeys, Output_Dict, OutputParams, i, OutputFile)
                 CSV_Save(OutputParamsKeys, Output_Dict, i, CSVFile)
+                PLOT_Save(OutputParamsKeys, Output_Dict, i)
                 i = i + IStep
             except Exception as e:
                 print(str(e))
                 i = i + IStep
                 Output_Save(OutputParamsKeys, Output_Dict, OutputParams, i, OutputFile)
                 CSV_Save(OutputParamsKeys, Output_Dict, i, CSVFile)
+                PLOT_Save(OutputParamsKeys,Output_Dict,i)
         OutputFile.close()
         CSVFile.close()
         print("Done!")
         if not TestMode:
-            print("Result In "+Simulation_Title+"-Model-Result.opem -->" + os.getcwd())
-            print("Output-Table In"+Simulation_Title+"-Model-Result.csv --> " + os.getcwd())
+            print("Result In " + Simulation_Title + "-Model-Result.opem -->" + os.getcwd())
+            print("Output-Table In" + Simulation_Title + "-Model-Result.csv --> " + os.getcwd())
     except Exception:
         if not OutputFile.closed:
             OutputFile.close()

@@ -15,6 +15,8 @@ def isfloat(value):
         return True
     except ValueError:
         return False
+
+
 def input_test(a):
     '''
     This function is for test Get_Input
@@ -22,7 +24,9 @@ def input_test(a):
     :return: "1"
     '''
     return "1"
-def Get_Input(InputParams,input_item=input):
+
+
+def Get_Input(InputParams, input_item=input):
     """
     This function get inputs from users
     :param InputParams : InputParams  for each  model
@@ -52,7 +56,7 @@ def Get_Input(InputParams,input_item=input):
         return False
 
 
-def Output_Save(OutputParamsKeys, OutputDict,OutputParams, i, file):
+def Output_Save(OutputParamsKeys, OutputDict, OutputParams, i, file):
     """
     This function write analysis result in Simulation-Result.opem file
     :param OutputParamsKeys : OutputParams Key as  list
@@ -76,7 +80,7 @@ def Output_Save(OutputParamsKeys, OutputDict,OutputParams, i, file):
     print("###########")
 
 
-def Output_Init(InputDict,Title):
+def Output_Init(InputDict, Title):
     """
     This function initialize output file
     :param InputDict: Input Test Vector
@@ -86,11 +90,11 @@ def Output_Init(InputDict,Title):
     :return: file object
     """
     Art = text2art("Opem")
-    file = open(Title+"-Model-Result.opem", "w")
+    file = open(Title + "-Model-Result.opem", "w")
     file.write(Art)
     file.write("Simulation Date : " + str(datetime.datetime.now()) + "\n")
     file.write("**********\n")
-    file.write(Title+" Model\n\n")
+    file.write(Title + " Model\n\n")
     file.write("**********\n")
     file.write("Simulation Inputs : \n\n")
     Input_Keys = list(InputDict.keys())
@@ -101,7 +105,7 @@ def Output_Init(InputDict,Title):
     return file
 
 
-def CSV_Init(OutputParamsKeys,OutputParams,Title):
+def CSV_Init(OutputParamsKeys, OutputParams, Title):
     """
     This function initialize csv file
     :param OutputParamsKeys: OutputParams Key as list
@@ -110,7 +114,7 @@ def CSV_Init(OutputParamsKeys,OutputParams,Title):
     :type OutputParams : dict
     :return: file object
     """
-    file = open(Title+"-Model-Result.csv", "w")
+    file = open(Title + "-Model-Result.csv", "w")
     file.write("I (A),")
     for index, item in enumerate(OutputParamsKeys):
         file.write(item + " (" + OutputParams[item] + ")")
@@ -141,6 +145,22 @@ def CSV_Save(OutputParamsKeys, OutputDict, i, file):
     file.write("\n")
 
 
+def PLOT_Save(OutputParamsKeys, Output_Dict, i):
+    """
+
+    :param OutputParamsKeys:
+    :param Output_Dict:
+    :param i:
+    :return:
+    """
+    # global vcell_plot, vstack_plot, power_plot, powerstack_plot, pem_plot
+    global plot_vars
+    for key in OutputParamsKeys:
+        if plot_vars[key] is None:
+            plot_vars[key] = []
+        plot_vars[key].append(Output_Dict[key])
+    print("Mahi", plot_vars)
+
 def filter_lambda(Input_Dict):
     '''
     This function filter lambda parameter
@@ -158,6 +178,7 @@ def filter_lambda(Input_Dict):
         return Input_Dict
     except Exception:
         return Input_Dict
+
 
 def filter_alpha(Input_Dict):
     '''
