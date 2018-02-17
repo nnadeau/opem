@@ -1,40 +1,25 @@
 # -*- coding: utf-8 -*-
-
-from opem.Amphlett import Static_Analysis as Amphlett_Analysis
-from opem.Larminie_Dicks import Static_Analysis as Larminiee_Analysis
-from opem.Chamberline_Kim import Static_Analysis as Chamberline_Kim_Analysis
-from opem.gui.mainwindow import *
+from .Static.Amphlett import Static_Analysis as Amphlett_Analysis
+from .Static.Larminie_Dicks import Static_Analysis as Larminiee_Analysis
+from .Static.Chamberline_Kim import Static_Analysis as Chamberline_Kim_Analysis
+from .Dynamic.Padulles1 import Dynamic_Analysis as Padulles1_Analysis
+from .Dynamic.Padulles2 import Dynamic_Analysis as Padulles2_Analysis
+from .Dynamic.Padulles_Hauer import Dynamic_Analysis as Padulles_Hauer_Analysis
 from art import tprint
+from .Params import Version
 import doctest
 import sys
-import argparse
 
-
-Version = 0.2
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="This is OPEM")
-    parser.add_argument(
-        '-g', '--gui',
-        help='Using this option will show GUI for the OPEM',
-        action='store_true'
-    )
-    parser.add_argument(
-        '-t', '--test',
-        help='Run the test cases',
-        action='store_true'
-    )
-    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    app = None
-    Menu = {"Amphlett_Analysis": Amphlett_Analysis,
-            "Larminiee_Analysis": Larminiee_Analysis,
-            "Chamberlain_Kim_Analysis": Chamberline_Kim_Analysis}
-    MenuKeys = list(Menu.keys())
+    args = sys.argv
+    argsup = list(map(str.upper, args))
+    Menu={"Amphlett_Analysis (Static)":Amphlett_Analysis,"Larminiee_Analysis (Static)":Larminiee_Analysis,
+          "Chamberline_Kim_Analysis (Static)":Chamberline_Kim_Analysis,
+          "Padulles_Analysis I (Dynamic)":Padulles1_Analysis,"Padulles_Analysis II (Dynamic)":Padulles2_Analysis,
+          "Padulles_Hauer Analysis (Dynamic)":Padulles_Hauer_Analysis}
+    MenuKeys=list(Menu.keys())
     MenuKeys.sort()
 
     if args.test:   # RUN Test
@@ -52,11 +37,11 @@ if __name__ == "__main__":
                 print(str(i + 1) + "-" + item)
             # noinspection PyBroadException
             try:
-                AnalysisIndex = int(input("Please Choose Analysis : "))
-            except:
-                AnalysisIndex = -1
-            if AnalysisIndex - 1 in range(len(MenuKeys)):
-                Menu[MenuKeys[AnalysisIndex - 1]]()
+                AnalysisIndex=int(input(("Please Choose Analysis : ")))
+            except Exception:
+                AnalysisIndex=-1
+            if AnalysisIndex-1 in range(len(MenuKeys)):
+                Menu[MenuKeys[AnalysisIndex-1]]()
                 InputIndex = input("Press [R] to restart OPEM or any other key to exit.")
                 if InputIndex.upper() != "R":
                     ExitFlag = True

@@ -22,7 +22,7 @@ The Open-Source PEMFC Simulation Tool (Opem) is an open-source mathematical simu
 ## Installation		
 
 ### Source Code
-- Download [Version 0.2](https://github.com/ecsim/opem/archive/v0.2.zip) or [Latest Source ](https://github.com/ecsim/opem/archive/master.zip)
+- Download [Version 0.5](https://github.com/ecsim/opem/archive/v0.5.zip) or [Latest Source ](https://github.com/ecsim/opem/archive/master.zip)
 - Run `pip install -r requirements.txt` or `pip3 install -r requirements.txt` (Need root access)
 - Run `python3 setup.py install` or `python setup.py install` (Need root access)				
 
@@ -33,7 +33,7 @@ The Open-Source PEMFC Simulation Tool (Opem) is an open-source mathematical simu
 - Run `pip install opem` or `pip3 install opem` (Need root access)
 
 ### Exe Version (Only Windows)
-- Download [Exe-Version 0.2](https://www.dropbox.com/s/kmqjf3wta6z8897/OPEM%28v0.2%29.zip?dl=0)
+- Download [Exe-Version 0.5](https://www.dropbox.com/s/s2j2ok3ha2t2omr/OPEM%28v0.5%29.zip?dl=0)
 - Extract Zip File
 - Run `OPEM.exe`
 ## Usage
@@ -248,9 +248,314 @@ The Open-Source PEMFC Simulation Tool (Opem) is an open-source mathematical simu
 		</table>
 		</html>
 		* For more information about this model visit <a href="Documents/Chamberline_Kim.ipynb">here</a>
+	4. Padulles Dynamic Model I
+		<html>
+		<table>
+			<tr>
+				<td align="center" >Input</td>
+				<td align="center">Description</td>
+				<td  align="center">Unit</td>
+			</tr>
+			<tr>
+				<td align="center">E0</td>
+				<td align="center">No load voltage</td>
+				<td align="center">V</td>
+			</tr>
+			<tr>
+				<td align="center">T</td>
+				<td align="center">FuelCell temperature</td>
+				<td align="center">K</td>
+			</tr>
+			<tr>
+				<td align="center">KH2</td>
+				<td align="center">Hydrogen valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">KO2</td>
+				<td align="center">Oxygen valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">tH2</td>
+				<td align="center">Hydrogen time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">tO2</td>
+				<td align="center">Oxygen time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">B</td>
+				<td align="center">Activation voltage constant</td>
+				<td align="center">V</td>
+			</tr>
+			<tr>
+				<td align="center">C</td>
+				<td align="center">Activation constant parameter</td>
+				<td align="center">A^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">Rint</td>
+				<td align="center">FuelCell internal resistance</td>
+				<td align="center">ohm</td>
+			</tr>
+			<tr>
+				<td align="center">rho</td>
+				<td align="center">Hydrogen-oxygen flow ratio</td>
+				<td align="center">--</td>
+			</tr>
+			<tr>
+				<td align="center">qH2</td>
+				<td align="center">Molar flow of hydrogen</td>
+				<td align="center">kmol/s</td>
+			</tr>
+			<tr>
+				<td align="center">N0</td>
+				<td align="center">Number of cells</td>
+				<td align="center">--</td>
+			</tr>
+			<tr>
+				<td align="center">i-start</td>
+				<td align="center">Cell operating current start point</td>
+				<td align="center">A</td>
+			</tr>
+			<tr>
+				<td align="center">i-step</td>
+				<td align="center">Cell operating current step</td>
+				<td align="center">A</td>
+			</tr>
+			<tr>
+				<td align="center">i-stop</td>
+				<td align="center">Cell operating current end point</td>
+				<td align="center">A</td>
+			</tr>
+			
+				
+		</table>
+		</html>
+		* For more information about this model visit <a href="Documents/Padulles1.ipynb">here</a>				
+
+	5. Padulles Dynamic Model II
+		<html>
+		<table>
+			<tr>
+				<td align="center" >Input</td>
+				<td align="center">Description</td>
+				<td  align="center">Unit</td>
+			</tr>
+			<tr>
+				<td align="center">E0</td>
+				<td align="center">No load voltage</td>
+				<td align="center">V</td>
+			</tr>
+			<tr>
+				<td align="center">T</td>
+				<td align="center">FuelCell temperature</td>
+				<td align="center">K</td>
+			</tr>
+			<tr>
+				<td align="center">KH2</td>
+				<td align="center">Hydrogen valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">KH2O</td>
+				<td align="center">Water valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">KO2</td>
+				<td align="center">Oxygen valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">tH2</td>
+				<td align="center">Hydrogen time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">tH2O</td>
+				<td align="center">Water time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">tO2</td>
+				<td align="center">Oxygen time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">B</td>
+				<td align="center">Activation voltage constant</td>
+				<td align="center">V</td>
+			</tr>
+			<tr>
+				<td align="center">C</td>
+				<td align="center">Activation constant parameter</td>
+				<td align="center">A^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">Rint</td>
+				<td align="center">FuelCell internal resistance</td>
+				<td align="center">ohm</td>
+			</tr>
+			<tr>
+				<td align="center">rho</td>
+				<td align="center">Hydrogen-oxygen flow ratio</td>
+				<td align="center">--</td>
+			</tr>
+			<tr>
+				<td align="center">qH2</td>
+				<td align="center">Molar flow of hydrogen</td>
+				<td align="center">kmol/s</td>
+			</tr>
+			<tr>
+				<td align="center">qH2O</td>
+				<td align="center">Molar flow of water</td>
+				<td align="center">kmol/s</td>
+			</tr>
+			<tr>
+				<td align="center">N0</td>
+				<td align="center">Number of cells</td>
+				<td align="center">--</td>
+			</tr>
+			<tr>
+				<td align="center">i-start</td>
+				<td align="center">Cell operating current start point</td>
+				<td align="center">A</td>
+			</tr>
+			<tr>
+				<td align="center">i-step</td>
+				<td align="center">Cell operating current step</td>
+				<td align="center">A</td>
+			</tr>
+			<tr>
+				<td align="center">i-stop</td>
+				<td align="center">Cell operating current end point</td>
+				<td align="center">A</td>
+			</tr>
+			
+				
+		</table>
+		</html>
+		* For more information about this model visit <a href="Documents/Padulles2.ipynb">here</a>
+	5. Padulles-Hauer Dynamic Model
+		<html>
+		<table>
+			<tr>
+				<td align="center" >Input</td>
+				<td align="center">Description</td>
+				<td  align="center">Unit</td>
+			</tr>
+			<tr>
+				<td align="center">E0</td>
+				<td align="center">No load voltage</td>
+				<td align="center">V</td>
+			</tr>
+			<tr>
+				<td align="center">T</td>
+				<td align="center">FuelCell temperature</td>
+				<td align="center">K</td>
+			</tr>
+			<tr>
+				<td align="center">KH2</td>
+				<td align="center">Hydrogen valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">KH2O</td>
+				<td align="center">Water valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">KO2</td>
+				<td align="center">Oxygen valve constant</td>
+				<td align="center">kmol.s^(-1).atm^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">tH2</td>
+				<td align="center">Hydrogen time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">tH2O</td>
+				<td align="center">Water time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">tO2</td>
+				<td align="center">Oxygen time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">t1</td>
+				<td align="center">Reformer time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">t2</td>
+				<td align="center">Reformer time constant</td>
+				<td align="center">s</td>
+			</tr>
+			<tr>
+				<td align="center">B</td>
+				<td align="center">Activation voltage constant</td>
+				<td align="center">V</td>
+			</tr>
+			<tr>
+				<td align="center">C</td>
+				<td align="center">Activation constant parameter</td>
+				<td align="center">A^(-1)</td>
+			</tr>
+			<tr>
+				<td align="center">CV</td>
+				<td align="center">Conversion factor</td>
+				<td align="center">--</td>
+			</tr>
+			<tr>
+				<td align="center">Rint</td>
+				<td align="center">FuelCell internal resistance</td>
+				<td align="center">ohm</td>
+			</tr>
+			<tr>
+				<td align="center">rho</td>
+				<td align="center">Hydrogen-oxygen flow ratio</td>
+				<td align="center">--</td>
+			</tr>
+			<tr>
+				<td align="center">qMethanol</td>
+				<td align="center">Molar flow of methanol</td>
+				<td align="center">kmol/s</td>
+			</tr>
+			<tr>
+				<td align="center">N0</td>
+				<td align="center">Number of cells</td>
+				<td align="center">--</td>
+			</tr>
+			<tr>
+				<td align="center">i-start</td>
+				<td align="center">Cell operating current start point</td>
+				<td align="center">A</td>
+			</tr>
+			<tr>
+				<td align="center">i-step</td>
+				<td align="center">Cell operating current step</td>
+				<td align="center">A</td>
+			</tr>
+			<tr>
+				<td align="center">i-stop</td>
+				<td align="center">Cell operating current end point</td>
+				<td align="center">A</td>
+			</tr>
+			
+				
+		</table>
+		</html>
+		* For more information about this model visit <a href="Documents/Padulles_Hauer.ipynb">here</a>
 		
 		
-- Find Your Result In `.opem` & `.csv` files	
+- Find Your Reports In `Model_Name` Folder
 
 <div align="center">
 
@@ -281,13 +586,34 @@ or send an email to [opem@ecsim.ir](mailto:opem@ecsim.ir "opem@ecsim.ir").
   	- [x] PEMFC losses model
   	- [x] Power of PEMFC
   	- [x] Efficiency of PEMFC
-- [X] Flat Output
+- [x] Flat Output
     - [x] Simulation Result
     - [X] CSV File
+    - [x] HTML
 - [ ] GUI
   - [ ] Plot Graphs
   - [ ] Input/Output
 - [ ] Dynamic Analysis
+  - [x] Padulles Dynamic Model I
+    - [x] Nernst Voltage
+  	- [x] Voltage of PEMFC
+  	- [x] Power of PEMFC
+  	- [x] Efficiency of PEMFC
+  - [x] Padulles Dynamic Model II
+    - [x] Nernst Voltage
+  	- [x] Voltage of PEMFC
+  	- [x] Power of PEMFC
+  	- [x] Efficiency of PEMFC
+  - [x] Padulles-Hauer Dynamic Model
+    - [x] Nernst Voltage
+  	- [x] Voltage of PEMFC
+  	- [x] Power of PEMFC
+  	- [x] Efficiency of PEMFC
+  - [ ] Padulles-Hauer-Pathapati-Amphlett Dynamic Model
+    - [ ] Nernst Voltage
+  	- [ ] Voltage of PEMFC
+  	- [ ] Power of PEMFC
+  	- [ ] Efficiency of PEMFC
   - [ ] Impedance model of fuel cell
   - [ ] Dicks-Larminie Danymic Model
   - [ ] Becherif-Hissel Dynamic model
@@ -304,6 +630,9 @@ You can fork the repository, improve or fix some part of it and then send the pu
 
 Remember to write a few tests for your code before sending pull requests. 
 
+## Thanks
+
+* [Chart.js](https://github.com/chartjs/Chart.js "Chartjs") for this awesome tool ;-)
 
 ## Reference
 
@@ -316,6 +645,15 @@ Remember to write a few tests for your code before sending pull requests.
 
 <blockquote>
 4- I. Sadli, P. Thounthong, J.-P. Martin, S. Rael, B. Davat. 2006. "Behaviour of a PEMFC supplying a low voltage static converter." Journal of Power Sources (Elsevier) 156: 119–125. doi:10.1016/j.jpowsour.2005.08.021.
+</blockquote>
+
+<blockquote>
+5- J. Padulles, G.W. Ault, J.R. McDonald. 2000. "An integrated SOFC plant dynamic model for power systems simulation." Journal of Power Sources (Elsevier) 86 (1-2): 495-500. doi:10.1016/S0378-7753(99)00430-9.
+</blockquote>
+						
+<blockquote>
+6- Hauer, K.-H. 2001. "Analysis tool for fuel cell vehicle hardware and software (controls) with an application to fuel economy comparisons of alternative system designs." Ph.D. dissertation, Transportation Technology
+and Policy, University of California Davis.
 </blockquote>
 
 
