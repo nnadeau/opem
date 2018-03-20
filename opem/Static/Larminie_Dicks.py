@@ -4,6 +4,7 @@ from opem.Static.Amphlett import Power_Calc,Efficiency_Calc,VStack_Calc,PowerSta
 from opem.Params import Larminiee_InputParams as InputParams
 from opem.Params import Larminiee_OutputParams as OutputParams
 from opem.Functions import *
+from opem.Params import Larminiee_Description
 import os
 
 def Vcell_Calc(E0, i,i_0,i_n,i_L,R_M,A,B):
@@ -56,6 +57,9 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
     """
     OutputFile = None
     CSVFile = None
+    Warning1 = False
+    Warning2 = False
+    I_Warning = 0
     try:
         Simulation_Title="Larminie-Dicks"
         if PrintMode==True:
@@ -82,6 +86,7 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
         Precision = get_precision(IStep)
         i = Input_Dict["i-start"]
         I_List = []
+        Efficiency_List = []
         Power_List = []
         Vstack_List = []
         while i < IEnd:
@@ -89,11 +94,13 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
                 I_List.append(i)
                 Output_Dict["Vcell"] = Vcell_Calc(E0=Input_Dict["E0"],i=i,i_0=Input_Dict["i_0"],i_n=Input_Dict["i_n"],
                                                   i_L=Input_Dict["i_L"],R_M=Input_Dict["RM"],B=Input_Dict["B"],A=Input_Dict["A"])
+                [Warning1, I_Warning] = warning_check_1(Output_Dict["Vcell"], I_Warning, i, Warning1)
                 Output_Dict["PEM Efficiency"] = Efficiency_Calc(Output_Dict["Vcell"])
                 Output_Dict["Power"] = Power_Calc(Output_Dict["Vcell"], i)
                 Output_Dict["VStack"] = VStack_Calc(Input_Dict["N"], Output_Dict["Vcell"])
                 Output_Dict["Power-Stack"] = PowerStack_Calc(Output_Dict["Power"], Input_Dict["N"])
                 Vstack_List.append(Output_Dict["VStack"])
+                Efficiency_List.append(Output_Dict["PEM Efficiency"])
                 Power_List.append(Output_Dict["Power-Stack"])
                 if ReportMode==True:
                     Output_Save(OutputParamsKeys, Output_Dict,OutputParams, i, OutputFile,PrintMode)
@@ -106,11 +113,19 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
                     Output_Save(OutputParamsKeys, Output_Dict, OutputParams, i, OutputFile,PrintMode)
                     CSV_Save(OutputParamsKeys, Output_Dict, i, CSVFile)
         if ReportMode==True:
+            HTML_Desc(Simulation_Title, Larminiee_Description, HTMLFile)
+            HTML_Input_Table(Input_Dict=Input_Dict, Input_Params=InputParams, file=HTMLFile)
             HTML_Chart(x=str(I_List), y=str(Power_List), color='rgba(255,99,132,1)', x_label="I(A)", y_label="P(W)",
                     chart_name="Power-Stack", size="600px", file=HTMLFile)
             HTML_Chart(x=str(I_List), y=str(Vstack_List), color='rgba(99,100,255,1)', x_label="I(A)", y_label="V(V)",
                     chart_name="Voltage-Stack", size="600px", file=HTMLFile)
-            HTML_Input_Table(Input_Dict=Input_Dict, Input_Params=InputParams, file=HTMLFile)
+            HTML_Chart(x=str(I_List), y=str(Efficiency_List), color='rgb(255, 0, 255)', x_label="I(A)", y_label="EFF",
+                       chart_name="Efficiency", size="600px", file=HTMLFile)
+            HTML_Chart(x=str(list(map(rounder, Power_List))), y=str(Efficiency_List), color='rgb(238, 210, 141)',
+                       x_label="P(W)", y_label="EFF",
+                       chart_name="Efficiency vs Power", size="600px", file=HTMLFile)
+            warning_print(warning_flag_1=Warning1, warning_flag_2=Warning2, I_Warning=I_Warning, file=HTMLFile,
+                          PrintMode=PrintMode)
             HTML_End(HTMLFile)
             OutputFile.close()
             CSVFile.close()
@@ -121,6 +136,6 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
             if PrintMode==True:
                 print("Result In -->" + os.path.join(os.getcwd(), Simulation_Title))
         else:
-            return {"P": Power_List, "I": I_List, "V": Vstack_List}
+            return {"P": Power_List, "I": I_List, "V": Vstack_List,"EFF":Efficiency_List}
     except Exception:
         print("[Error] Larminiee Simulation Failed!(Check Your Inputs)")

@@ -2,11 +2,18 @@
 import math
 from opem.Params import Amphlett_InputParams as InputParams
 from opem.Params import Amphlett_OutputParams as OutputParams
-from opem.Params import xi1,xi3,xi4,HHV,uF
+from opem.Params import Amphlett_Params_Default as Defaults
+from opem.Params import xi1,xi3,xi4,HHV,uF,Amphlett_Description
 from opem.Functions import *
 import os
 
 
+
+def R_Calc(V,i):
+    try:
+        return V/i
+    except Exception:
+        print("[Error] R Total Calculation Failed (V:%s ,i:%s)" % (str(V), str(i)))
 
 def Enernst_Calc(T, PH2, PO2):
     """
@@ -290,6 +297,9 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
     """
     OutputFile = None
     CSVFile = None
+    Warning1=False
+    Warning2=False
+    I_Warning=0
     try:
         Simulation_Title="Amphlett"
         if PrintMode==True:
@@ -300,9 +310,10 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
         OutputParamsKeys.sort()
         Output_Dict = dict(zip(OutputParamsKeys, [None] * len(OutputParamsKeys)))
         if not TestMode:
-            Input_Dict = InputMethod(InputParams)
+            Input_Dict = InputMethod(InputParams,params_default=Defaults)
         else:
             Input_Dict = InputMethod
+            Input_Dict = filter_default(input_dict=Input_Dict,params_default=Defaults)
         Input_Dict=filter_lambda(Input_Dict)
         if PrintMode==True:
             print("Analyzing . . .")
@@ -318,24 +329,37 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
         Output_Dict["Enernst"] = Enernst_Calc(Input_Dict["T"], Input_Dict["PH2"], Input_Dict["PO2"])
         i = Input_Dict["i-start"]
         I_List=[]
+        Efficiency_List=[]
         Power_List=[]
         Vstack_List=[]
+        Eta_Ohmic_List=[]
+        Eta_Conc_List=[]
+        Eta_Active_List=[]
+        #R_List=[]
         while i < IEnd:
             try:
                 I_List.append(i)
                 Output_Dict["Eta Activation"] = Eta_Act_Calc(Input_Dict["T"], Input_Dict["PO2"], Input_Dict["PH2"], i,
                                                              Input_Dict["A"])
+                Eta_Active_List.append(Output_Dict["Eta Activation"])
                 Output_Dict["Eta Ohmic"] = Eta_Ohmic_Calc(i, Input_Dict["l"], Input_Dict["A"], Input_Dict["T"],
                                                           Input_Dict["lambda"], R_elec=Input_Dict["R"])
+                Eta_Ohmic_List.append(Output_Dict["Eta Ohmic"])
                 Output_Dict["Eta Concentration"] = Eta_Conc_Calc(i, Input_Dict["A"], Input_Dict["B"],
                                                                  Input_Dict["JMax"])
+                Eta_Conc_List.append(Output_Dict["Eta Concentration"])
                 Output_Dict["Loss"] = Loss_Calc(Output_Dict["Eta Activation"], Output_Dict["Eta Ohmic"],
                                                 Output_Dict["Eta Concentration"])
                 Output_Dict["Vcell"] = Vcell_Calc(Output_Dict["Enernst"], Output_Dict["Loss"])
+                [Warning1,I_Warning] = warning_check_1(Output_Dict["Vcell"],I_Warning,i,Warning1)
+                Warning2 = warning_check_2(Vcell=Output_Dict["Vcell"], warning_flag=Warning2)
                 Output_Dict["PEM Efficiency"] = Efficiency_Calc(Output_Dict["Vcell"])
                 Output_Dict["Power"] = Power_Calc(Output_Dict["Vcell"], i)
                 Output_Dict["VStack"] = VStack_Calc(Input_Dict["N"], Output_Dict["Vcell"])
+                #Output_Dict["R Total"] = R_Calc(Output_Dict["VStack"],i)
+                #R_List.append(Output_Dict["R Total"])
                 Vstack_List.append(Output_Dict["VStack"])
+                Efficiency_List.append(Output_Dict["PEM Efficiency"])
                 Output_Dict["Power-Stack"]=PowerStack_Calc(Output_Dict["Power"],Input_Dict["N"])
                 Power_List.append(Output_Dict["Power-Stack"])
                 if ReportMode==True:
@@ -349,11 +373,24 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
                     Output_Save(OutputParamsKeys, Output_Dict, OutputParams, i, OutputFile,PrintMode)
                     CSV_Save(OutputParamsKeys, Output_Dict, i, CSVFile)
         if ReportMode==True:
+            HTML_Desc(Simulation_Title, Amphlett_Description, HTMLFile)
+            HTML_Input_Table(Input_Dict=Input_Dict, Input_Params=InputParams, file=HTMLFile)
             HTML_Chart(x=str(I_List), y=str(Power_List), color='rgba(255,99,132,1)', x_label="I(A)", y_label="P(W)",
                     chart_name="Power-Stack",size="600px",file=HTMLFile)
+            #HTML_Chart(x=str(I_List), y=str(R_List), color='rgb(159, 82, 71)', x_label="I(A)", y_label="R(ohm)",
+                       #chart_name="R Total", size="600px", file=HTMLFile)
             HTML_Chart(x=str(I_List), y=str(Vstack_List), color='rgba(99,100,255,1)', x_label="I(A)", y_label="V(V)",
                     chart_name="Voltage-Stack",size="600px",file=HTMLFile)
-            HTML_Input_Table(Input_Dict=Input_Dict, Input_Params=InputParams, file=HTMLFile)
+            HTML_Chart(x=str(I_List), y=[str(Eta_Active_List),str(Eta_Conc_List),str(Eta_Ohmic_List)],
+                       color=['rgba(255,99,132,1)','rgba(99,100,255,1)','rgb(238, 210, 141)'],
+                       x_label="I(A)", y_label="V(V)", chart_name=["Eta Active","Eta Conc",
+                                                                   "Eta Ohmic"],size="600px",file=HTMLFile)
+            HTML_Chart(x=str(I_List), y=str(Efficiency_List), color='rgb(255, 0, 255)', x_label="I(A)", y_label="EFF",
+                       chart_name="Efficiency", size="600px", file=HTMLFile)
+            HTML_Chart(x=str(list(map(rounder,Power_List))), y=str(Efficiency_List), color='rgb(238, 210, 141)', x_label="P(W)", y_label="EFF",
+                       chart_name="Efficiency vs Power", size="600px", file=HTMLFile)
+            warning_print(warning_flag_1=Warning1, warning_flag_2=Warning2, I_Warning=I_Warning, file=HTMLFile,
+                          PrintMode=PrintMode)
             HTML_End(HTMLFile)
             OutputFile.close()
             CSVFile.close()
@@ -364,6 +401,6 @@ def Static_Analysis(InputMethod=Get_Input, TestMode=False, PrintMode=True, Repor
             if PrintMode==True:
                 print("Result In -->" + os.path.join(os.getcwd(), Simulation_Title))
         else:
-            return {"P":Power_List,"I":I_List,"V":Vstack_List}
+            return {"P":Power_List,"I":I_List,"V":Vstack_List,"EFF":Efficiency_List}
     except Exception:
         print("[Error] Amphlett Simulation Failed!(Check Your Inputs)")
